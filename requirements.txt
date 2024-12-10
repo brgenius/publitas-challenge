@@ -1,0 +1,3 @@
+* Parses a XML product feed
+* File parser to parse a large set of lines. The example feed has 50071 items for instance
+* For each item, it should extracts the id, title and description
