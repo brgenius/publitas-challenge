@@ -1,7 +1,8 @@
-require 'json'
-require 'nokogiri'
 require 'concurrent'
 require 'concurrent-edge'
+
+require 'nokogiri'
+require 'oj'
 
 require './external_service'
 
@@ -77,16 +78,13 @@ end
 def batch_sender(external_service, xml_feed, batch_queue)
   batch_queue.each do |current_batch_itens_indexes|
     
-    json_out  = JSON.generate(batch_builder(xml_feed, current_batch_itens_indexes))
-    # p json_out
-    external_service.call( json_out )
+    external_service.call( Oj.dump(batch_builder(xml_feed, current_batch_itens_indexes)) )
   end
 end
 
 #main vars
 
 xml_feed = Nokogiri::XML.parse(File.read("feed.xml"))
-# @itens =  @doc.xpath("//rss//channel//item")
 
 puts "Item count ->"
 item_count = xml_feed.xpath("count(//rss//channel//item)").to_i

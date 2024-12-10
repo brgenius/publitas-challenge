@@ -1,3 +1,5 @@
+require 'json'
+
 class ExternalService
   ONE_MEGA_BYTE = 1_048_576.0
 
