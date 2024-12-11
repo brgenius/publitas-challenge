@@ -1,3 +1,4 @@
+require 'async'
 require 'oj'
 
 module Application
@@ -12,10 +13,15 @@ module Application
 
     def send()
       @batch_queue.each do |current_batch_itens_indexes|
-        batch_build = Application::BatchBuilder.new(@feed, current_batch_itens_indexes)
-        
-        @external_service.call( Oj.dump(batch_build.queue_builder()) )
+        Async do |task|
+          puts "Batch will start"
+          
+          batch_build = Application::BatchBuilder.new(@feed, current_batch_itens_indexes)
+          @external_service.call( Oj.dump(batch_build.queue_builder()) )
+
+          puts "Batch completed\n"
+        end
       end
-    end    
+    end  
   end
 end

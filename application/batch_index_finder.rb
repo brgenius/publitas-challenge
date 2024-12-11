@@ -41,11 +41,11 @@ module Application
 
       batch_indexes_queue
     end
-
+    
     private
 
     def search(lower_batch_index)
-      (lower_batch_index..@feed.item_count).to_a.bsearch_index do |i|
+      (lower_batch_index..@feed.item_count).to_a.bsearch do |i|
         
         batch_search_pattern = "//rss//channel//item[position() >= #{lower_batch_index} and position() <= #{i}]"
         batch_size = @feed.xml.xpath(batch_search_pattern).to_s.bytesize
