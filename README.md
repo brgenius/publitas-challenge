@@ -45,11 +45,8 @@ Dependencies:
 
 ### Execution:
 
-Run the script, specifying the feed file path (either a Publitas feed URL or a local file path):
+Run the script, replacing the given url with the actual path to your Publitas feed or without the url in order to use the local XML file. 
 
-`$ ruby publitas_feed_processor.rb <feed_file_xml_url>`
-
-Replace <feed_file_xml_url> with the actual path to your Publitas feed or local XML file.
-Eg:
-
-`$ ruby assignment.rb http://challenge.publitas.com/feed.xml`
+`ruby assignment.rb http://challenge.publitas.com/feed.xml #remote file execution`
+or
+`ruby assignment.rb #local feed.xml execution`
