@@ -1,3 +1,5 @@
+![alt text](histoy.gif "Publitas feed processor gource video history")
+
 # Publitas Feed Processor
 
 This Ruby program efficiently extracts item from a Publitas feed (XML format) or a local XML file and sends them to an external service for further processing.
