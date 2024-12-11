@@ -37,6 +37,7 @@ module Application
             
         batch_count += 1
         puts "Batch count #{batch_count} >>>>" 
+        yield batch_indexes_metadata[:batch_index]
       end
 
       batch_indexes_queue

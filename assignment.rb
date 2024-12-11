@@ -19,11 +19,10 @@ def main(feed)
     return
   end
 
-  batch_indexes_queue = Application::BatchIndexFinder.new(feed).builder()
-
   external_service = ExternalService.new
-  batch_sender = Application::BatchSender.new(external_service, feed, batch_indexes_queue)
-  batch_sender.send()
+  Application::BatchIndexFinder.new(feed).builder() do |batch_indexes_queue|
+    Application::BatchSender.new(external_service, feed, batch_indexes_queue).send()
+  end
 end
 
 feed = Infra::Feed.get_from_file("feed.xml") if feed.nil?
