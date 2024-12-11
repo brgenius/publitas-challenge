@@ -1,3 +1,9 @@
+# You may run passing a xml url as a argument, like below or using a previously download file, called feed.xml
+#
+# $ ruby assignment.rb http://challenge.publitas.com/feed.xml
+# or 
+# $ ruby assignment.rb 
+
 require 'uri'
 require './requirements'
 
@@ -7,6 +13,12 @@ for arg in ARGV
 end
 
 def main(feed)
+  if !feed.has_valid_itens? then
+    puts "No valid itens were found in the given file. Exiting..."
+
+    return
+  end
+
   batch_indexes_queue = Application::BatchIndexFinder.new(feed).builder()
 
   external_service = ExternalService.new

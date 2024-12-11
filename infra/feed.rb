@@ -13,6 +13,7 @@ module Infra
     end
 
     def self.get_from_file(file_path)
+      puts "Reading from feed.xml file"
       xml_feed = Nokogiri::XML.parse(File.read(file_path))
       
       self.builder(xml_feed)
