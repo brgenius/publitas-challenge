@@ -1,5 +1,7 @@
 require './application/byte_utils'
+require './domain/batch_index'
 require './domain/feed'
+
 
 module Application
   # What it does:
@@ -52,7 +54,7 @@ module Application
         if is_batch_ready then
           puts "Batch from index #{lower_batch_index}-#{i} will contain approximately #{Application::ByteUtils.to_megabytes(batch_size)} mb ..."
           return {
-            batch_index: batch_index_factory(lower_batch_index, i, batch_size),
+            batch_index: Domain::BatchIndex.new(lower_batch_index, i, batch_size),
             new_lower_batch_index: i
           }
         end

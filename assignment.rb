@@ -10,21 +10,11 @@ require './application/batch_index_finder'
 
 require './external_service'
 
-# #util
-
-# def bytes_to_megabytes (bytes)
-#   bytes / (1024.0 * 1024.0) 
-# end
-
-# def is_lower_than_batch_size?(bytes)
-#   bytes_to_megabytes(bytes) <= 5
-# end
-
 ## factories
 
-def batch_index_factory(lower_batch_index, upper_batch_index, batch_size)
-  {lower_batch_index: lower_batch_index, upper_batch_index: upper_batch_index, batch_size: batch_size}
-end
+# def batch_index_factory(lower_batch_index, upper_batch_index, batch_size)
+#   {lower_batch_index: lower_batch_index, upper_batch_index: upper_batch_index, batch_size: batch_size}
+# end
 
 def xml_node_text_extractor(node, prop)
   item = node.xpath(prop).children.first
@@ -81,7 +71,7 @@ end
 # end
 
 def batch_builder(xml_feed, batch_index)
-  batch_search_pattern = "//rss//channel//item[position() >= #{batch_index[:lower_batch_index]} and position() <= #{batch_index[:upper_batch_index]}]"
+  batch_search_pattern = "//rss//channel//item[position() >= #{batch_index.lower_batch_index} and position() <= #{batch_index.upper_batch_index}]"
   current_batch_itens = xml_feed.xpath(batch_search_pattern).flat_map do |item|
     {
       description: xml_node_text_extractor(item, "description"),
