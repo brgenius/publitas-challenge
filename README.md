@@ -50,3 +50,7 @@ Run the script, replacing the given url with the actual path to your Publitas fe
 `ruby assignment.rb http://challenge.publitas.com/feed.xml #remote file execution`
 or
 `ruby assignment.rb #local feed.xml execution`
+
+### Running tests:
+
+`ruby -Ilib:test tests/**/*_test.rb`

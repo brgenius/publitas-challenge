@@ -10,7 +10,7 @@ module Application
     end
 
     def queue_builder()
-      batch_search_pattern = "//rss//channel//item[position() >= #{batch_index.lower_batch_index} and position() <= #{batch_index.upper_batch_index}]"
+      batch_search_pattern = "//rss//channel//item[position() >= #{@batch_index.lower_batch_index} and position() <= #{@batch_index.upper_batch_index}]"
       current_batch_itens = @feed.xml.xpath(batch_search_pattern).flat_map do |item|
         Domain::BatchItem.new(
           Application::XmlUtils.node_text_extractor(item, "description"),
