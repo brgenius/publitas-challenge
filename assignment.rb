@@ -31,30 +31,36 @@ end
 
 ## services
 
+def batch_index_search(xml_feed, lower_batch_index, item_count)
+  (lower_batch_index..item_count).to_a.bsearch_index do |i|
+    
+    batch_search_pattern = "//rss//channel//item[position() >= #{lower_batch_index} and position() <= #{i}]"
+    batch_size = xml_feed.xpath(batch_search_pattern).to_s.bytesize
+    is_batch_ready = is_lower_than_batch_size?(batch_size)
+    
+    puts "Batch from index #{lower_batch_index}-#{i} will be: Size #{bytes_to_megabytes(batch_size)} / #{is_batch_ready}..."
+    if is_batch_ready then
+      return {
+        batch_index: batch_index_factory(lower_batch_index, i, batch_size),
+        new_lower_batch_index: i
+      }
+    end
+    
+    !is_batch_ready
+  end
+end
+
 def batch_index_builder(xml_feed, item_count)
   batch_indexes_queue = []
   lower_batch_index = 0
-  current_batch = batch_index_factory(lower_batch_index, item_count, nil)
-
+  
   batch_count = 0 
   while lower_batch_index < item_count do
-    search_batch_size_array = lower_batch_index..item_count
-    search_batch_size_array.bsearch do |i|
-      
-      batch_search_pattern = "//rss//channel//item[position() >= #{lower_batch_index} and position() <= #{i}]"
-      batch_size = xml_feed.xpath(batch_search_pattern).to_s.bytesize
-      is_batch_ready = is_lower_than_batch_size?(batch_size)
-      
-      if is_batch_ready then
-        # puts "Batch from index #{lower_batch_index}-#{i} will be: Size #{bytes_to_megabytes(batch_size)} / #{is_batch_ready}..."
-      
-        batch_indexes_queue << batch_index_factory(lower_batch_index, i, batch_size)
-        lower_batch_index = i+1
-      end
-      
-      !is_batch_ready
-    end
-
+    batch_indexes_metadata = batch_index_search(xml_feed, lower_batch_index, item_count)
+    
+    batch_indexes_queue << batch_indexes_metadata[:batch_index]
+    lower_batch_index = batch_indexes_metadata[:new_lower_batch_index] + 1
+        
     batch_count += 1
     puts "Batch count #{batch_count} >>>>" 
   end
@@ -77,7 +83,6 @@ end
 
 def batch_sender(external_service, xml_feed, batch_queue)
   batch_queue.each do |current_batch_itens_indexes|
-    
     external_service.call( Oj.dump(batch_builder(xml_feed, current_batch_itens_indexes)) )
   end
 end
@@ -95,6 +100,9 @@ batch_indexes_queue = batch_index_builder(xml_feed, item_count)
 external_service = ExternalService.new
 batch_sender(external_service, xml_feed, batch_indexes_queue)
 
+
+
+# drafts
 
 
 # messages = Concurrent::Channel.new( capacity: 10 )
