@@ -4,6 +4,8 @@ require 'concurrent-edge'
 require 'nokogiri'
 require 'oj'
 
+require './domain/feed'
+require './infra/feed'
 require './external_service'
 
 BATCH_SIZE = 5
@@ -48,7 +50,7 @@ def batch_index_search(xml_feed, lower_batch_index, item_count)
     is_batch_ready = is_lower_than_batch_size?(batch_size)
     
     if is_batch_ready then
-      puts "Batch from index #{lower_batch_index}-#{i} will be: Size #{bytes_to_megabytes(batch_size)} / #{is_batch_ready}..."
+      puts "Batch from index #{lower_batch_index}-#{i} will contain approximately #{bytes_to_megabytes(batch_size)} mb ..."
       return {
         batch_index: batch_index_factory(lower_batch_index, i, batch_size),
         new_lower_batch_index: i
@@ -74,7 +76,6 @@ def batch_index_builder(xml_feed, item_count)
     batch_count += 1
     puts "Batch count #{batch_count} >>>>" 
   end
-  # p batch_indexes_queue
 
   batch_indexes_queue
 end
@@ -98,16 +99,17 @@ end
 
 #main vars
 
-xml_feed = Nokogiri::XML.parse(File.read("feed.xml"))
+# xml_feed = Nokogiri::XML.parse(File.read("feed.xml"))
 
-puts "Item count ->"
-item_count = xml_feed.xpath("count(//rss//channel//item)").to_i
-puts item_count
+# puts "Item count ->"
+# item_count = xml_feed.xpath("count(//rss//channel//item)").to_i
+# puts item_count
+feed = Infra::Feed.get_from_file("feed.xml")
 
-batch_indexes_queue = batch_index_builder(xml_feed, item_count)
+batch_indexes_queue = batch_index_builder(feed.xml, feed.item_count)
 
 external_service = ExternalService.new
-batch_sender(external_service, xml_feed, batch_indexes_queue)
+batch_sender(external_service, feed.xml, batch_indexes_queue)
 
 
 
