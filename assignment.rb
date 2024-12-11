@@ -7,6 +7,7 @@ require 'oj'
 require './domain/feed'
 require './infra/feed'
 require './application/batch_index_finder'
+require './application/batch_builder'
 
 require './external_service'
 
@@ -16,10 +17,10 @@ require './external_service'
 #   {lower_batch_index: lower_batch_index, upper_batch_index: upper_batch_index, batch_size: batch_size}
 # end
 
-def xml_node_text_extractor(node, prop)
-  item = node.xpath(prop).children.first
-  item.nil? ? "" : item.text
-end
+# def xml_node_text_extractor(node, prop)
+#   item = node.xpath(prop).children.first
+#   item.nil? ? "" : item.text
+# end
 
 # ## services
 
@@ -70,20 +71,22 @@ end
 #   batch_indexes_queue
 # end
 
-def batch_builder(xml_feed, batch_index)
-  batch_search_pattern = "//rss//channel//item[position() >= #{batch_index.lower_batch_index} and position() <= #{batch_index.upper_batch_index}]"
-  current_batch_itens = xml_feed.xpath(batch_search_pattern).flat_map do |item|
-    {
-      description: xml_node_text_extractor(item, "description"),
-      title: xml_node_text_extractor(item, "title"),
-      id: xml_node_text_extractor(item, "g:id").to_s
-    }
-  end 
-end
+# def batch_builder(xml_feed, batch_index)
+#   batch_search_pattern = "//rss//channel//item[position() >= #{batch_index.lower_batch_index} and position() <= #{batch_index.upper_batch_index}]"
+#   current_batch_itens = xml_feed.xpath(batch_search_pattern).flat_map do |item|
+#     {
+#       description: xml_node_text_extractor(item, "description"),
+#       title: xml_node_text_extractor(item, "title"),
+#       id: xml_node_text_extractor(item, "g:id").to_s
+#     }
+#   end 
+# end
 
-def batch_sender(external_service, xml_feed, batch_queue)
+def batch_sender(external_service, feed, batch_queue)
   batch_queue.each do |current_batch_itens_indexes|
-    external_service.call( Oj.dump(batch_builder(xml_feed, current_batch_itens_indexes)) )
+    batch_build = Application::BatchBuilder.new(feed, current_batch_itens_indexes)
+    
+    external_service.call( Oj.dump(batch_build.queue_builder()) )
   end
 end
 
@@ -93,8 +96,10 @@ feed = Infra::Feed.get_from_file("feed.xml")
 batchIndexFinder = Application::BatchIndexFinder.new(feed)
 batch_indexes_queue = batchIndexFinder.builder()
 
+
+
 external_service = ExternalService.new
-batch_sender(external_service, feed.xml, batch_indexes_queue)
+batch_sender(external_service, feed, batch_indexes_queue)
 
 
 
