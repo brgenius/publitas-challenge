@@ -1,4 +1,4 @@
-![alt text](histoy.gif "Publitas feed processor gource video history")
+![alt text](https://raw.githubusercontent.com/brgenius/publitas-challenge/main/history.gif 'Publitas feed processor gource video history')
 
 # Publitas Feed Processor
 
@@ -25,11 +25,12 @@ Why This Approach:
 ### Performance:
 
 Binary search-like optimization significantly improves processing speed compared to sequential search.
-### Efficiency: 
+
+### Efficiency:
 
 Focusing on batches close to the size limit reduces potential wasted processing cycles.
 
-### Flexibility: 
+### Flexibility:
 
 The program can work with both Publitas feeds and local XML files.
 
@@ -46,11 +47,9 @@ Dependencies:
 
 Run the script, specifying the feed file path (either a Publitas feed URL or a local file path):
 
-
-
-```$ ruby publitas_feed_processor.rb <feed_file_xml_url>```
+`$ ruby publitas_feed_processor.rb <feed_file_xml_url>`
 
 Replace <feed_file_xml_url> with the actual path to your Publitas feed or local XML file.
 Eg:
 
-```$ ruby assignment.rb http://challenge.publitas.com/feed.xml```
+`$ ruby assignment.rb http://challenge.publitas.com/feed.xml`
