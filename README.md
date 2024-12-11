@@ -38,7 +38,7 @@ The program can work with both Publitas feeds and local XML files.
 
 ### Ruby Environment:
 
-Ensure you have a Ruby environment (e.g., Ruby on Rails) set up.
+Ensure you have a Ruby environment `2.7.8` set up.
 Dependencies:
 
 `$ bundle install`
