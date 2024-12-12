@@ -1,6 +1,3 @@
-require 'concurrent'
-require 'concurrent-edge'
-
 #application layer
 require './application/batch_index_finder'
 require './application/batch_builder'
